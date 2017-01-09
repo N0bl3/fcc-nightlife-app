@@ -17,9 +17,7 @@ module.exports = function(app, passport, request) {
 			if (!err) {
 				body = JSON.parse(body);
 				token = body.access_token;
-				console.log(body, token)
 			}
-			console.log(err);
 		});
 	}
 
@@ -40,6 +38,7 @@ module.exports = function(app, passport, request) {
 
 			res.sendFile(path + '/public/index.html');
 		});
+		
 	app.route('/autocomplete').get(function(req, res) {
 		request('https://api.yelp.com/v3/autocomplete?text=del&latitude=37.786882&longitude=-122.399972', {
 				'auth': {
@@ -47,10 +46,10 @@ module.exports = function(app, passport, request) {
 				}
 			},
 			function(err, response, body) {
-				console.log(body);
 				res.end(body);
 			});
 	});
+	
 	app.route('/login')
 		.get(function(req, res) {
 			res.sendFile(path + '/public/login.html');
