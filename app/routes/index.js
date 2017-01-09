@@ -32,13 +32,13 @@ module.exports = function(app, passport, request) {
 
 	var clickHandler = new ClickHandler();
 	getToken();
-	
+
 	app.route('/')
 		.get(isLoggedIn, function(req, res) {
 
 			res.sendFile(path + '/public/index.html');
 		});
-		
+
 	app.route('/autocomplete').get(function(req, res) {
 		request('https://api.yelp.com/v3/autocomplete?text=del&latitude=37.786882&longitude=-122.399972', {
 				'auth': {
@@ -49,7 +49,19 @@ module.exports = function(app, passport, request) {
 				res.end(body);
 			});
 	});
-	
+
+	app.route('/searchnear').post(function(req, res) {
+		request(`https://api.yelp.com/v3/businesses/search?latitude=${req.body.latitude}&longitude=${req.body.longitude}`, {
+			'auth': {
+				'bearer': token
+			}
+		}, function(err, response, body){
+			if(!err){
+				res.end(body);
+			}
+		});
+	});
+
 	app.route('/login')
 		.get(function(req, res) {
 			res.sendFile(path + '/public/login.html');
