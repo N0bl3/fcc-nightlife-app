@@ -1,43 +1,74 @@
 'use strict';
-
 var path = process.cwd();
 var ClickHandler = require(path + '/app/controllers/clickHandler.server.js');
 
-module.exports = function (app, passport) {
+module.exports = function(app, passport, request) {
+	let token = '';
 
-	function isLoggedIn (req, res, next) {
+	function getToken() {
+		request.post({
+			url: 'https://api.yelp.com/oauth2/token',
+			form: {
+				grant_type: 'client_credentials',
+				client_id: process.env.YELP_CLIENT,
+				client_secret: process.env.YELP_SECRET
+			}
+		}, function(err, res, body) {
+			if (!err) {
+				body = JSON.parse(body);
+				token = body.access_token;
+				console.log(body, token)
+			}
+			console.log(err);
+		});
+	}
+
+	function isLoggedIn(req, res, next) {
 		if (req.isAuthenticated()) {
 			return next();
-		} else {
+		}
+		else {
 			res.redirect('/login');
 		}
 	}
 
 	var clickHandler = new ClickHandler();
-
+	getToken();
+	
 	app.route('/')
-		.get(isLoggedIn, function (req, res) {
+		.get(isLoggedIn, function(req, res) {
+
 			res.sendFile(path + '/public/index.html');
 		});
-
+	app.route('/autocomplete').get(function(req, res) {
+		request('https://api.yelp.com/v3/autocomplete?text=del&latitude=37.786882&longitude=-122.399972', {
+				'auth': {
+					'bearer': token
+				}
+			},
+			function(err, response, body) {
+				console.log(body);
+				res.end(body);
+			});
+	});
 	app.route('/login')
-		.get(function (req, res) {
+		.get(function(req, res) {
 			res.sendFile(path + '/public/login.html');
 		});
 
 	app.route('/logout')
-		.get(function (req, res) {
+		.get(function(req, res) {
 			req.logout();
 			res.redirect('/login');
 		});
 
 	app.route('/profile')
-		.get(isLoggedIn, function (req, res) {
+		.get(isLoggedIn, function(req, res) {
 			res.sendFile(path + '/public/profile.html');
 		});
 
 	app.route('/api/:id')
-		.get(isLoggedIn, function (req, res) {
+		.get(isLoggedIn, function(req, res) {
 			res.json(req.user.github);
 		});
 
