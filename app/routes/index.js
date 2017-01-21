@@ -1,7 +1,7 @@
 'use strict';
 var path = process.cwd();
-var ClickHandler = require(path + '/app/controllers/clickHandler.server.js');
-
+var ClickHandler = require('../controllers/clickHandler.server.js');
+var BarHandler = require('../controllers/barHandler.server.js');
 module.exports = function(app, passport, request) {
 	let token = '';
 
@@ -29,9 +29,11 @@ module.exports = function(app, passport, request) {
 			res.redirect('/login');
 		}
 	}
+	
+	getToken();
 
 	var clickHandler = new ClickHandler();
-	getToken();
+	var barHandler = new BarHandler();
 
 	app.route('/')
 		.get(isLoggedIn, function(req, res) {
@@ -92,8 +94,8 @@ module.exports = function(app, passport, request) {
 			failureRedirect: '/login'
 		}));
 
-	app.route('/api/:id/clicks')
-		.get(isLoggedIn, clickHandler.getClicks)
-		.post(isLoggedIn, clickHandler.addClick)
-		.delete(isLoggedIn, clickHandler.resetClicks);
+	app.route('/api/:id/bar')
+		.get(isLoggedIn, barHandler.getBars)
+		.post(isLoggedIn, barHandler.switchBar);	
+	
 };

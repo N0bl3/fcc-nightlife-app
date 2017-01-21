@@ -26,6 +26,7 @@ var ajaxFunctions = {
       xmlhttp.send();
    },
    ajaxPostRequest: function ajaxPostRequest (method, url, data, callback) {
+      method = "POST";
       var xmlhttp = new XMLHttpRequest();
 
       xmlhttp.onreadystatechange = function () {
