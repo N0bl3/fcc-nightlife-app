@@ -32,6 +32,6 @@
       if (profileRepos !== null) {
          updateHtmlElement(userObject, profileRepos, 'publicRepos');   
       }
-
+      
    }));
 })();
