@@ -19,11 +19,19 @@
 
 <body>
 	<div id="main" class="container">
+		<form class="form-inline" id="search-form">
+			<div class="form-group">
+				<label for="search" class="sr-only">Search a location:</label>
+				<input type="search" class="form-control" name="search" id="search"/>
+				<input type="submit" class="btn btn-default" value="Submit" />
+			</div>
+		</form>
 	</div>
 	<script type="text/javascript" src="common/ajax-functions.js"></script>
 	<script type="text/javascript" src="common/ui-updates.js"></script>
 	<script type="text/javascript" src="common/getPosition.js"></script>
 	<script type="text/javascript" src="common/searchYelp.js"></script>
+	<script type="text/javascript" src="controllers/formController.client.js"></script>
 	<script type="text/javascript" src="controllers/userController.client.js"></script>
 </body>
 

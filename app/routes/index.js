@@ -1,7 +1,10 @@
 'use strict';
 var path = process.cwd();
-var ClickHandler = require('../controllers/clickHandler.server.js');
 var BarHandler = require('../controllers/barHandler.server.js');
+
+var defaults = {
+	categories: "nightlife"
+}
 module.exports = function(app, passport, request) {
 	let token = '';
 
@@ -32,7 +35,6 @@ module.exports = function(app, passport, request) {
 	
 	getToken();
 
-	var clickHandler = new ClickHandler();
 	var barHandler = new BarHandler();
 
 	app.route('/')
@@ -41,7 +43,7 @@ module.exports = function(app, passport, request) {
 		});
 
 	app.route('/searchnear').post(function(req, res) {
-		request(`https://api.yelp.com/v3/businesses/search?latitude=${req.body.latitude}&longitude=${req.body.longitude}`, {
+		request(`https://api.yelp.com/v3/businesses/search?latitude=${req.body.latitude}&longitude=${req.body.longitude}&categories=${defaults.categories}`, {
 			'auth': {
 				'bearer': token
 			}
@@ -51,7 +53,18 @@ module.exports = function(app, passport, request) {
 			}
 		});
 	});
-
+	app.route('/search').post(function(req, res) {
+		request(`https://api.yelp.com/v3/businesses/search?location=${req.body.search}&categories=${defaults.categories}`, {
+			'auth': {
+				'bearer': token
+			}
+		}, function(err, response, body){
+			if(!err){
+				
+				res.send({body: body, user: req.user});
+			}
+		});
+	});
 	app.route('/login')
 		.get(function(req, res) {
 			res.sendFile(path + '/public/login.html');
