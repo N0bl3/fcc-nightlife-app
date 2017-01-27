@@ -9,10 +9,10 @@ var session = require('express-session');
 var request = require('request');
 
 var app = express();
-require('dotenv').load();
+// require('dotenv').load();
 require('./app/config/passport')(passport);
 
-mongoose.connect(process.env.MONGO_URI);
+mongoose.connect(process.env.MONGODB_URI);
 mongoose.Promise = global.Promise;
 
 app.use(bodyParser.json());
@@ -22,9 +22,9 @@ app.use('/public', express.static(process.cwd() + '/public'));
 app.use('/common', express.static(process.cwd() + '/app/common'));
 
 app.use(session({
-	secret: 'secretClementine',
-	resave: false,
-	saveUninitialized: true
+    secret: 'secretClementine',
+    resave: false,
+    saveUninitialized: true
 }));
 
 app.use(passport.initialize());
@@ -33,6 +33,6 @@ app.use(passport.session());
 routes(app, passport, request);
 
 var port = process.env.PORT || 8080;
-app.listen(port,  function () {
-	console.log('Node.js listening on port ' + port + '...');
+app.listen(port, function() {
+    console.log('Node.js listening on port ' + port + '...');
 });
